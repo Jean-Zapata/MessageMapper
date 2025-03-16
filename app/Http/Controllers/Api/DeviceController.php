@@ -12,15 +12,13 @@ class DeviceController extends Controller
     // Listado de dispositivos
     public function index()
     {
-        $devices = Device::all();
-        return response()->json($devices);
+        return response()->json(Device::all());
     }
 
     // Mostrar un dispositivo en particular
     public function show($id)
     {
-        $device = Device::findOrFail($id);
-        return response()->json($device);
+        return response()->json(Device::findOrFail($id));
     }
 
     // Crear un nuevo dispositivo
@@ -32,19 +30,24 @@ class DeviceController extends Controller
             'image'        => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
-        $imagePath = null;
-        if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('public/device_images');
+        try {
+            $imagePath = null;
+            if ($request->hasFile('image')) {
+                $imagePath = $request->file('image')->store('public/device_images');
+                $imagePath = str_replace('public/', 'storage/', $imagePath);
+            }
+
+            $device = Device::create([
+                'name'         => $request->name,
+                'phone_number' => $request->phone_number,
+                'status'       => 'active',
+                'image_url'    => $imagePath,
+            ]);
+
+            return response()->json($device, 201);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'No se pudo crear el dispositivo'], 500);
         }
-
-        $device = Device::create([
-            'name'         => $request->name,
-            'phone_number' => $request->phone_number,
-            'status'       => 'active',
-            'image_url'    => $imagePath,
-        ]);
-
-        return response()->json($device, 201);
     }
 
     // Actualizar un dispositivo existente
@@ -58,23 +61,28 @@ class DeviceController extends Controller
 
         $device = Device::findOrFail($id);
 
-        // Subir imagen si existe y eliminar la anterior
-        if ($request->hasFile('image')) {
-            if ($device->image_url) {
-                Storage::delete($device->image_url);
+        try {
+            // Manejo de la imagen
+            if ($request->hasFile('image')) {
+                if ($device->image_url) {
+                    Storage::delete(str_replace('storage/', 'public/', $device->image_url));
+                }
+                $imagePath = $request->file('image')->store('public/device_images');
+                $device->image_url = str_replace('public/', 'storage/', $imagePath);
             }
-            $device->image_url = $request->file('image')->store('public/device_images');
+
+            $device->update([
+                'name'         => $request->name,
+                'phone_number' => $request->phone_number,
+            ]);
+
+            return response()->json($device);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'No se pudo actualizar el dispositivo'], 500);
         }
-
-        $device->update([
-            'name'         => $request->name,
-            'phone_number' => $request->phone_number,
-        ]);
-
-        return response()->json($device);
     }
 
-    // Cambiar el estado (toggle) del dispositivo
+    // Cambiar el estado del dispositivo
     public function toggleStatus($id)
     {
         $device = Device::findOrFail($id);
@@ -87,13 +95,10 @@ class DeviceController extends Controller
         ]);
     }
 
-    // Reiniciar dispositivo (acción simulada)
+    // Reiniciar dispositivo (simulado)
     public function restart($id)
     {
-        // Lógica de reinicio simulada
-        return response()->json([
-            'message' => 'Dispositivo reiniciado.'
-        ]);
+        return response()->json(['message' => 'Dispositivo reiniciado.']);
     }
 
     // Eliminar un dispositivo
@@ -101,14 +106,16 @@ class DeviceController extends Controller
     {
         $device = Device::findOrFail($id);
 
-        if ($device->image_url) {
-            Storage::delete($device->image_url);
+        try {
+            if ($device->image_url) {
+                Storage::delete(str_replace('storage/', 'public/', $device->image_url));
+            }
+
+            $device->delete();
+
+            return response()->json(['message' => 'Dispositivo eliminado.']);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'No se pudo eliminar el dispositivo'], 500);
         }
-
-        $device->delete();
-
-        return response()->json([
-            'message' => 'Dispositivo eliminado.'
-        ]);
     }
 }

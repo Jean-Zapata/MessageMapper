@@ -22,7 +22,10 @@ Route::apiResource('contacts', ContactController::class);
 
 //API routes Devices
 Route::apiResource('devices', DeviceController::class);
+Route::patch('devices/{id}/toggle-status', [DeviceController::class, 'toggleStatus']);
 
 //API routes Campaigns
 Route::apiResource('campaigns', CampaignController::class);
 Route::post('campaigns/{campaign}/send-message', [CampaignController::class, 'sendMessage']);
+Route::post('/campaigns/{campaign}/send', [CampaignController::class, 'sendMessage'])->name('campaigns.send');
+Route::get('/campaigns/{id}/send', [CampaignController::class, 'send'])->name('campaigns.send');

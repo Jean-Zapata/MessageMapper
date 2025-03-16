@@ -14,19 +14,40 @@ const mainNavItems: NavItem[] = [
         href: '/dashboard',
         icon: LayoutGrid,
     },
+    { 
+        title: 'Devices',
+        href: '/device',
+        icon: LayoutGrid, 
+    },
+    { 
+        title: 'Contactos',
+        href: '/contacts',
+        icon: LayoutGrid, 
+    },
+    { 
+        title: 'Campaigns',
+        href: '/campaigns',
+        icon: LayoutGrid, 
+    },
+    {
+        title: 'Tags',
+        href: '/tags',
+        icon: LayoutGrid,
+    },
+    
 ];
 
 const footerNavItems: NavItem[] = [
     {
         title: 'Github Repo',
-        href: 'https://github.com/laravel/vue-starter-kit',
+        href: 'https://github.com/Jean-Zapata/MessageMapper',
         icon: Folder,
     },
-    {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits',
-        icon: BookOpen,
-    },
+    //{
+    //    title: 'Documentation',
+    //    href: 'https://laravel.com/docs/starter-kits',
+    //    icon: BookOpen,
+    //},
 ];
 </script>
 
