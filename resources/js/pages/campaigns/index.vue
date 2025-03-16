@@ -257,17 +257,17 @@ const formatDateTime = (dateString: string): string => {
     });
 };
 
-const getDeviceName = (deviceId: number): string => {
-    const device = devices.value.find(d => d.id === deviceId);
-    return device ? device.name : 'Dispositivo no encontrado';
-};
+//const getDeviceName = (deviceId: number): string => {
+//    const device = devices.value.find(d => d.id === deviceId);
+//    return device ? device.name : 'Dispositivo no encontrado';
+//};
 
-const getTagNames = (tagIds: number[]): string => {
-    return tagIds.map(id => {
-        const tag = tags.value.find(t => t.id === id);
-        return tag ? tag.name : '';
-    }).filter(Boolean).join(', ');
-};
+//const getTagNames = (tagIds: number[]): string => {
+//    return tagIds.map(id => {
+//        const tag = tags.value.find(t => t.id === id);
+//        return tag ? tag.name : '';
+//    }).filter(Boolean).join(', ');
+//};
 
 const isScheduledTimeValid = (scheduledTime: string): boolean => {
     const scheduledDate = new Date(scheduledTime);
